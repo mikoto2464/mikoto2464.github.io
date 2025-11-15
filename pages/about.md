@@ -7,6 +7,8 @@ title: 关于我
 
 jekyll主题来自tmaize-blog，见[tmaize-blog](https://github.com/TMaize/tmaize-blog)。
 
+添加友链可在github仓库发起pull request。
+
 ## 相关技能
 Java、Python、C\C++、Linux运维、Rust(Learning)
 
