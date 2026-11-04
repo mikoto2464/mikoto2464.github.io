@@ -196,27 +196,21 @@ def compressed_upload_path(path: Path, output_dir: Path, quality: int) -> Path:
             "python3 -m pip install -r scripts/requirements-cos-images.txt"
         ) from error
 
-    temporary_name = hashlib.sha256(str(path).encode("utf-8")).hexdigest() + suffix
+    temporary_name = hashlib.sha256(str(path).encode("utf-8")).hexdigest() + ".webp"
     candidate = output_dir / temporary_name
     try:
         with Image.open(path) as source:
             if getattr(source, "is_animated", False):
                 return path
             image = ImageOps.exif_transpose(source)
-            if suffix == ".png":
-                image.save(candidate, format="PNG", optimize=True, compress_level=9)
-            elif suffix in {".jpg", ".jpeg"}:
-                if image.mode not in {"L", "RGB"}:
-                    image = image.convert("RGB")
-                image.save(
-                    candidate,
-                    format="JPEG",
-                    quality=quality,
-                    optimize=True,
-                    progressive=True,
-                )
-            else:
-                image.save(candidate, format="WEBP", quality=quality, method=6)
+            image.save(
+                candidate,
+                format="WEBP",
+                lossless=True,
+                quality=quality,
+                method=6,
+                exact=True,
+            )
     except Exception as error:
         candidate.unlink(missing_ok=True)
         raise RuntimeError(f"could not compress image: {path}") from error
@@ -567,7 +561,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--quality",
         type=int,
-        help="JPEG/WebP compression quality from 1 to 100 (default: COS_IMAGE_QUALITY or 82)",
+        help="WebP lossless compression effort from 1 to 100 (default: COS_IMAGE_QUALITY or 82)",
     )
     return parser.parse_args()
 

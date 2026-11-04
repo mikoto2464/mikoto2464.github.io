@@ -5,3 +5,5 @@
 /.bundle
 /.env.cos-upload
 /.venv-cos-upload
+__pycache__/
+*.py[cod]

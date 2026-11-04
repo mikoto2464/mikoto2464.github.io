@@ -2,7 +2,7 @@
 
 This helper compresses locally referenced images from `_posts`, uploads the smaller payload to COS, rewrites the Markdown/HTML image URLs to a custom HTTPS domain, and removes local image files only after every upload and rewrite succeeds.
 
-PNG files use lossless optimization. JPEG and WebP files use quality `82` by default. If compression produces a larger file, the original bytes are uploaded instead. Temporary compressed files are removed automatically.
+Static PNG, JPEG, and WebP files are converted to lossless WebP. Animated images, GIF, SVG, and other formats keep their original encoding. If WebP produces a larger file, the original bytes are uploaded instead. Temporary compressed files are removed automatically.
 
 ## Setup
 
@@ -16,7 +16,7 @@ chmod 600 .env.cos-upload
 
 Fill `.env.cos-upload` locally. It is ignored by Git. Use a CAM sub-account with only the minimum object-upload permission and rotate any credential that has ever been pasted into chat, logs, or source code.
 
-Set `COS_IMAGE_QUALITY` from `1` to `100` to change JPEG/WebP quality. It can also be overridden per run with `--quality`.
+Set `COS_IMAGE_QUALITY` from `1` to `100` to change the lossless WebP compression effort. This affects encoding time and file size, not visual quality. It can also be overridden per run with `--quality`.
 
 `COS_PUBLIC_REFERER` is sent as the HTTP `Referer` header when restoring images. Set it to the blog origin allowed by the image-domain hotlink policy.
 
@@ -40,7 +40,7 @@ Process one article, or keep local image files:
 ./blog.sh images --apply --keep-local "_posts/2026-11-05-example.md"
 ```
 
-Use a different compression quality:
+Use a different lossless compression effort:
 
 ```bash
 ./blog.sh images --quality 75
@@ -69,4 +69,4 @@ Restore one article:
 ./blog.sh images --restore --apply "_posts/2026-11-05-example.md"
 ```
 
-Object names use the full SHA-256 content hash, so original image names are not exposed and identical image content is uploaded to the same stable URL.
+Object names use the full SHA-256 content hash of the final upload payload, so original image names are not exposed and identical image content is uploaded to the same stable URL.

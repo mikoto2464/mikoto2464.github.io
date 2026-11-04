@@ -81,21 +81,44 @@ class UploadCosImagesTests(unittest.TestCase):
             self.assertEqual(1, count)
             self.assertEqual(f'<img alt="x" src="{plan.public_url}">', rewritten)
 
-    def test_jpeg_is_compressed_before_hashing(self):
+    def test_png_is_converted_to_lossless_webp_before_hashing(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            image = root / "large.jpg"
+            image = root / "screenshot.png"
+            compression_dir = root / "compressed"
+            compression_dir.mkdir()
+            self.make_image(image)
+
+            plan = uploader.make_plan(
+                image, "https://img.example.com", "blog/images", compression_dir, 100
+            )
+
+            self.assertLess(plan.upload_size, plan.original_size)
+            self.assertNotEqual(image, plan.upload_path)
+            self.assertEqual(".webp", plan.upload_path.suffix)
+            self.assertEqual(".webp", Path(plan.object_key).suffix)
+            self.assertIn(uploader.sha256_file(plan.upload_path), plan.object_key)
+            with Image.open(image) as original, Image.open(plan.upload_path) as compressed:
+                self.assertEqual(
+                    original.convert("RGBA").tobytes(),
+                    compressed.convert("RGBA").tobytes(),
+                )
+
+    def test_original_is_kept_when_lossless_webp_is_larger(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            image = root / "photo.jpg"
             compression_dir = root / "compressed"
             compression_dir.mkdir()
             self.make_image(image, image_format="JPEG", quality=100)
 
             plan = uploader.make_plan(
-                image, "https://img.example.com", "blog/images", compression_dir, 60
+                image, "https://img.example.com", "blog/images", compression_dir, 82
             )
 
-            self.assertLess(plan.upload_size, plan.original_size)
-            self.assertNotEqual(image, plan.upload_path)
-            self.assertIn(uploader.sha256_file(plan.upload_path), plan.object_key)
+            self.assertEqual(image, plan.upload_path)
+            self.assertEqual(plan.original_size, plan.upload_size)
+            self.assertEqual(".jpg", Path(plan.object_key).suffix)
 
     def test_restore_maps_public_hash_url_to_post_image_directory(self):
         with tempfile.TemporaryDirectory() as directory:
