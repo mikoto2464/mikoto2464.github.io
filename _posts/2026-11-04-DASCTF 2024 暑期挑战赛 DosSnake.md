@@ -7,11 +7,11 @@ categories:
   - ASM
 extMath: false
 ---
-_最新修改于 2026-11-04 17:30_
+_最新修改于  2026-11-04 21:14:58_
 
 查看文件类型
 ```
->file Game.exe
+> file Game.exe
 Game.exe: MS-DOS executable, MZ for MS-DOS
 ```
 

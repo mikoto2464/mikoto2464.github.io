@@ -1,0 +1,105 @@
+.copy-to-clipboard-icon {
+	cursor: pointer;
+}
+
+.copy-to-clipboard-icon svg {
+	vertical-align: text-bottom;
+	pointer-events: none;
+}
+
+.icon-position-right:not(.show-on-hover) {
+	margin-inline-start: 0.25em;
+}
+
+.icon-position-left:not(.show-on-hover) {
+	margin-inline-end: 0.25em;
+}
+
+.show-on-hover {
+	cursor: pointer;
+	/* Use a zero-width anchor so revealing the widget cannot reflow text. */
+	display: inline-block;
+	position: relative;
+	width: 0;
+	margin-left: 0;
+	overflow: visible;
+	z-index: 1;
+	vertical-align: baseline;
+	white-space: nowrap;
+	text-align: right;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+.show-on-hover > svg,
+.show-on-hover > .copy-to-clipboard-legacy-icon {
+	position: absolute;
+	bottom: -0.15em;
+	background-color: var(--code-background);
+	pointer-events: auto;
+}
+
+.show-on-hover.icon-position-right > svg,
+.show-on-hover.icon-position-right > .copy-to-clipboard-legacy-icon {
+	inset-inline-end: 0;
+}
+
+.show-on-hover.icon-position-left > svg,
+.show-on-hover.icon-position-left > .copy-to-clipboard-legacy-icon {
+	inset-inline-start: 0;
+}
+
+/* Source Mode */
+.cm-line:hover .show-on-hover {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+/* Reading Mode */
+code:hover .show-on-hover {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+/* Obsidian uses print media styles when exporting a note to PDF. */
+@media print {
+	.copy-to-clipboard-icon {
+		display: none !important;
+	}
+}
+
+.regex-input-error {
+	border-color: var(--text-error) !important;
+}
+
+.icon-input-container {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.icon-name-input {
+	flex: 1;
+}
+
+.regex-pattern-input {
+	width: 80%;
+}
+
+.regex-modifier-input {
+	width: 20%;
+}
+
+.preview-icon {
+	color: var(--text-normal);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.invalid-preview-icon {
+	color: var(--text-error) !important;
+}

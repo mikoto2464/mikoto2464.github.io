@@ -4,21 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "ee3c31d4e581b7d0",
+        "id": "f7b874430471b8a8",
         "type": "tabs",
         "children": [
           {
-            "id": "154601a439161ce3",
+            "id": "a60fce49574eeefb",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "_posts/2026-11-04-DASCTF 2024 暑期挑战赛 DosSnake.md",
-                "mode": "source",
-                "source": false
+                "file": "posts/2026/11/04/Pasted image 20261104212014.png"
               },
-              "icon": "lucide-file",
-              "title": "2026-11-04-DASCTF 2024 暑期挑战赛 DosSnake"
+              "icon": "lucide-image",
+              "title": "Pasted image 20261104212014"
             }
           }
         ]
@@ -188,24 +186,26 @@
       "bases:新建数据库": false
     }
   },
-  "active": "154601a439161ce3",
+  "active": "949b34bd770f7fb5",
   "lastOpenFiles": [
+    "_posts/2026-11-04-DASCTF 2024 最后一战 tryre.md",
+    "posts/2026/11/04/Pasted image 20261104212920.png",
+    "posts/2026/11/04/Pasted image 20261104212540.png",
+    "posts/2026/11/04/Pasted image 20261104212204.png",
+    "posts/2026/11/04/Pasted image 20261104212105.png",
+    "posts/2026/11/04/Pasted image 20261104212014.png",
+    "Pasted image 20261104212201.png",
+    "Pasted image 20261104212915.png",
+    "Pasted image 20261104212918.png",
+    "Pasted image 20261104212919.png",
     "_posts/2026-11-04-BUUCTF 特殊的BASE64.md",
-    "_posts/2026-11-04-BUUCTF 特殊的BASE64.md~",
     "_posts/2026-11-04-DASCTF 2024 暑期挑战赛 DosSnake.md",
+    "2026-11-04.md",
+    "_posts/2026-11-04-BUUCTF 特殊的BASE64.md~",
     "posts/2026/11/04/12.png",
-    "posts/2026/11/04/11.png",
-    "posts/2026/11/04/10.png",
     "posts/2026/11/04/10.png.part",
-    "posts/2026/11/04/9.png",
-    "posts/2026/11/04/8.png",
     "_posts/2025-11-29-Protobuf逆向.md",
     "_posts/1970-01-01-主题预览.md",
-    "posts/2026/11/04/1.png",
-    "posts/2026/11/04/2.png",
-    "posts/2026/11/04/3.png",
-    "posts/2026/11/04/4.png",
-    "posts/2026/11/04/5.png",
     "404.md",
     "posts/2026/11/04",
     "posts/2026/11",
