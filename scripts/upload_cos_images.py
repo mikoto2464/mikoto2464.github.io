@@ -367,7 +367,7 @@ def get_settings(require_credentials: bool, quality_override: int | None = None)
     )
 
 
-def upload_images(settings: CosSettings, plans: Iterable[PlannedImage]) -> None:
+def create_cos_client(settings: CosSettings):
     try:
         from qcloud_cos import CosConfig, CosS3Client
     except ImportError as error:
@@ -377,13 +377,18 @@ def upload_images(settings: CosSettings, plans: Iterable[PlannedImage]) -> None:
         ) from error
 
     logging.getLogger("qcloud_cos").setLevel(logging.CRITICAL)
-    config = CosConfig(
-        Region=settings.region,
-        SecretId=settings.secret_id,
-        SecretKey=settings.secret_key,
-        Token=settings.token,
+    return CosS3Client(
+        CosConfig(
+            Region=settings.region,
+            SecretId=settings.secret_id,
+            SecretKey=settings.secret_key,
+            Token=settings.token,
+        )
     )
-    client = CosS3Client(config)
+
+
+def upload_images(settings: CosSettings, plans: Iterable[PlannedImage]) -> None:
+    client = create_cos_client(settings)
     for plan in plans:
         with plan.upload_path.open("rb") as stream:
             client.put_object(
@@ -419,6 +424,90 @@ def object_key_from_public_url(target: str, settings: CosSettings) -> str | None
     if not re.fullmatch(r"[0-9a-f]{64}\.[A-Za-z0-9]+", filename):
         return None
     return object_key
+
+
+def is_managed_object_key(object_key: str, settings: CosSettings) -> bool:
+    prefix = settings.object_prefix.strip("/")
+    expected_parent = f"{prefix}/" if prefix else ""
+    if not object_key.startswith(expected_parent):
+        return False
+    filename = object_key[len(expected_parent) :]
+    if "/" in filename:
+        return False
+    return bool(re.fullmatch(r"[0-9a-f]{64}\.[A-Za-z0-9]+", filename)) and (
+        Path(filename).suffix.lower() in IMAGE_SUFFIXES
+    )
+
+
+def referenced_remote_keys(repo_root: Path, settings: CosSettings) -> set[str]:
+    keys: set[str] = set()
+    for markdown_path in all_markdown_files(repo_root):
+        try:
+            text = markdown_path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        for reference in iter_image_references(text):
+            object_key = object_key_from_public_url(reference.target, settings)
+            if object_key is not None:
+                keys.add(object_key)
+    return keys
+
+
+def list_managed_remote_objects(settings: CosSettings) -> set[str]:
+    client = create_cos_client(settings)
+    prefix = settings.object_prefix.strip("/")
+    request_prefix = f"{prefix}/" if prefix else ""
+    marker = ""
+    objects: set[str] = set()
+    while True:
+        response = client.list_objects(
+            Bucket=settings.bucket,
+            Prefix=request_prefix,
+            Marker=marker,
+            MaxKeys=1000,
+        )
+        contents = response.get("Contents", []) or []
+        for item in contents:
+            object_key = item.get("Key", "")
+            if is_managed_object_key(object_key, settings):
+                objects.add(object_key)
+        truncated = str(response.get("IsTruncated", "false")).lower() == "true"
+        if not truncated:
+            break
+        next_marker = response.get("NextMarker") or (
+            contents[-1].get("Key", "") if contents else ""
+        )
+        if not next_marker or next_marker == marker:
+            raise RuntimeError("COS object listing did not provide a usable next marker")
+        marker = next_marker
+    return objects
+
+
+def prune_remote_objects(
+    repo_root: Path,
+    settings: CosSettings,
+    apply_changes: bool,
+) -> int:
+    referenced = referenced_remote_keys(repo_root, settings)
+    remote = list_managed_remote_objects(settings)
+    unused = sorted(remote - referenced)
+    print(
+        f"remote cleanup: {len(remote)} managed objects, "
+        f"{len(referenced)} referenced, {len(unused)} unused"
+    )
+    for object_key in unused:
+        print(f"remote unused: {Path(object_key).name}")
+    if not unused:
+        return 0
+    if not apply_changes:
+        print("remote cleanup dry run; add --apply to delete these objects")
+        return len(unused)
+
+    client = create_cos_client(settings)
+    for object_key in unused:
+        client.delete_object(Bucket=settings.bucket, Key=object_key)
+        print(f"remote deleted: {Path(object_key).name}")
+    return len(unused)
 
 
 def restore_replacements_for_document(
@@ -473,22 +562,7 @@ def download_public_objects(
 ) -> dict[str, Path]:
     signer = None
     if all((settings.secret_id, settings.secret_key, settings.bucket, settings.region)):
-        try:
-            from qcloud_cos import CosConfig, CosS3Client
-        except ImportError as error:
-            raise RuntimeError(
-                "COS SDK is not installed; run: "
-                "python3 -m pip install -r scripts/requirements-cos-images.txt"
-            ) from error
-        logging.getLogger("qcloud_cos").setLevel(logging.CRITICAL)
-        signer = CosS3Client(
-            CosConfig(
-                Region=settings.region,
-                SecretId=settings.secret_id,
-                SecretKey=settings.secret_key,
-                Token=settings.token,
-            )
-        )
+        signer = create_cos_client(settings)
 
     def download_url(url: str, destination: Path) -> None:
         request = Request(
@@ -559,6 +633,11 @@ def parse_args() -> argparse.Namespace:
         help="rewrite links but do not delete local image files",
     )
     parser.add_argument(
+        "--prune-remote",
+        action="store_true",
+        help="list unused managed COS images; combine with --apply to delete them",
+    )
+    parser.add_argument(
         "--quality",
         type=int,
         help="WebP lossless compression effort from 1 to 100 (default: COS_IMAGE_QUALITY or 82)",
@@ -572,6 +651,7 @@ def run_upload(
     settings: CosSettings,
     apply_changes: bool,
     keep_local: bool,
+    prune_remote: bool,
 ) -> int:
     document_text: dict[Path, str] = {}
     local_images: set[Path] = set()
@@ -629,26 +709,37 @@ def run_upload(
                 file=sys.stderr,
             )
 
-        if not plans_by_path:
+        if not plans_by_path and not prune_remote:
             print("nothing to upload")
             return 0
         if not apply_changes:
-            print("dry run only; rerun with --apply after reviewing the plan")
+            if plans_by_path:
+                print("upload dry run only; rerun with --apply after reviewing the plan")
+            if prune_remote:
+                try:
+                    prune_remote_objects(repo_root, settings, apply_changes=False)
+                except Exception as error:
+                    print(
+                        f"remote cleanup scan failed ({type(error).__name__})",
+                        file=sys.stderr,
+                    )
+                    return 1
             return 0
 
         unique_plans = {plan.object_key: plan for plan in plans_by_path.values()}
-        try:
-            upload_images(settings, unique_plans.values())
-        except RuntimeError as error:
-            print(f"error: {error}", file=sys.stderr)
-            return 2
-        except Exception as error:
-            print(
-                f"upload failed ({type(error).__name__}); no Markdown files were changed "
-                "and no local images were deleted",
-                file=sys.stderr,
-            )
-            return 1
+        if unique_plans:
+            try:
+                upload_images(settings, unique_plans.values())
+            except RuntimeError as error:
+                print(f"error: {error}", file=sys.stderr)
+                return 2
+            except Exception as error:
+                print(
+                    f"upload failed ({type(error).__name__}); no Markdown files were changed "
+                    "and no local images were deleted",
+                    file=sys.stderr,
+                )
+                return 1
 
         for markdown_path, (new_text, replacement_count) in rewritten.items():
             if replacement_count and new_text != document_text[markdown_path]:
@@ -658,19 +749,35 @@ def run_upload(
                     f"({replacement_count} links)"
                 )
 
+        deleted = 0
         if keep_local:
             print("local images kept (--keep-local)")
-            return 0
+        else:
+            for image_path in plans_by_path:
+                if still_referenced(repo_root, image_path):
+                    print(f"kept (still referenced): {image_path.relative_to(repo_root)}")
+                    continue
+                image_path.unlink()
+                deleted += 1
+                print(f"deleted: {image_path.relative_to(repo_root)}")
 
-        deleted = 0
-        for image_path in plans_by_path:
-            if still_referenced(repo_root, image_path):
-                print(f"kept (still referenced): {image_path.relative_to(repo_root)}")
-                continue
-            image_path.unlink()
-            deleted += 1
-            print(f"deleted: {image_path.relative_to(repo_root)}")
-        print(f"done: uploaded {len(unique_plans)}, deleted {deleted}")
+        remote_deleted = 0
+        if prune_remote:
+            try:
+                remote_deleted = prune_remote_objects(
+                    repo_root, settings, apply_changes=True
+                )
+            except Exception as error:
+                print(
+                    f"remote cleanup failed ({type(error).__name__}); uploads and article "
+                    "changes were kept, but unused remote images were not fully cleaned",
+                    file=sys.stderr,
+                )
+                return 1
+        print(
+            f"done: uploaded {len(unique_plans)}, deleted {deleted} local, "
+            f"deleted {remote_deleted} remote"
+        )
         return 0
 
 
@@ -759,15 +866,24 @@ def main() -> int:
     try:
         if args.restore and args.keep_local:
             raise ValueError("--keep-local only applies to uploads")
+        if args.restore and args.prune_remote:
+            raise ValueError("--prune-remote cannot be combined with --restore")
         load_env_file((repo_root / args.env_file).resolve())
         settings = get_settings(
-            require_credentials=args.apply and not args.restore,
+            require_credentials=(args.apply and not args.restore) or args.prune_remote,
             quality_override=args.quality,
         )
         documents = markdown_files(repo_root, args.markdown)
         if args.restore:
             return run_restore(repo_root, documents, settings, args.apply)
-        return run_upload(repo_root, documents, settings, args.apply, args.keep_local)
+        return run_upload(
+            repo_root,
+            documents,
+            settings,
+            args.apply,
+            args.keep_local,
+            args.prune_remote,
+        )
     except (OSError, ValueError, RuntimeError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2

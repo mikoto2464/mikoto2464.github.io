@@ -16,6 +16,8 @@ chmod 600 .env.cos-upload
 
 Fill `.env.cos-upload` locally. It is ignored by Git. Use a CAM sub-account with only the minimum object-upload permission and rotate any credential that has ever been pasted into chat, logs, or source code.
 
+Remote cleanup additionally requires permission to list objects in the configured prefix and delete objects.
+
 Set `COS_IMAGE_QUALITY` from `1` to `100` to change the lossless WebP compression effort. This affects encoding time and file size, not visual quality. It can also be overridden per run with `--quality`.
 
 `COS_PUBLIC_REFERER` is sent as the HTTP `Referer` header when restoring images. Set it to the blog origin allowed by the image-domain hotlink policy.
@@ -46,6 +48,24 @@ Use a different lossless compression effort:
 ./blog.sh images --quality 75
 ./blog.sh images --apply --quality 75
 ```
+
+## Clean unused remote images
+
+The cleanup only considers content-hashed image objects created by this script under `COS_OBJECT_PREFIX`. Other bucket files and non-hash object names are ignored. References are collected from every Markdown file in the repository.
+
+Preview unused COS images without deleting anything:
+
+```bash
+./blog.sh images --prune-remote
+```
+
+Upload images and then delete remote objects that are no longer referenced:
+
+```bash
+./blog.sh images --apply --prune-remote
+```
+
+Cleanup runs only after uploads and article rewrites succeed. The ordinary upload flow already deletes local source images once they are no longer referenced.
 
 ## Restore from the public image domain
 

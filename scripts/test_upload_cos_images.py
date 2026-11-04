@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from PIL import Image
 
@@ -151,6 +152,54 @@ class UploadCosImagesTests(unittest.TestCase):
                 replacements[0].local_path,
             )
             self.assertEqual(f"![]({digest}.png)", rewritten)
+
+    def test_remote_cleanup_deletes_only_unreferenced_managed_objects(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            posts = root / "_posts"
+            posts.mkdir()
+            used_digest = "a" * 64
+            unused_digest = "b" * 64
+            posts.joinpath("2026-11-05-example.md").write_text(
+                f"![](https://img.example.com/blog/images/{used_digest}.webp)",
+                encoding="utf-8",
+            )
+            settings = uploader.CosSettings(
+                secret_id="test",
+                secret_key="test",
+                token=None,
+                bucket="test",
+                region="test",
+                public_base_url="https://img.example.com",
+                public_referer="https://example.com/",
+                object_prefix="blog/images",
+                image_quality=82,
+            )
+
+            class FakeClient:
+                def __init__(self):
+                    self.deleted = []
+
+                def list_objects(self, **kwargs):
+                    return {
+                        "IsTruncated": "false",
+                        "Contents": [
+                            {"Key": f"blog/images/{used_digest}.webp"},
+                            {"Key": f"blog/images/{unused_digest}.png"},
+                            {"Key": "blog/images/readme.txt"},
+                            {"Key": f"other/{unused_digest}.png"},
+                        ],
+                    }
+
+                def delete_object(self, **kwargs):
+                    self.deleted.append(kwargs["Key"])
+
+            client = FakeClient()
+            with patch.object(uploader, "create_cos_client", return_value=client):
+                deleted = uploader.prune_remote_objects(root, settings, apply_changes=True)
+
+            self.assertEqual(1, deleted)
+            self.assertEqual([f"blog/images/{unused_digest}.png"], client.deleted)
 
 
 if __name__ == "__main__":
