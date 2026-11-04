@@ -1,6 +1,6 @@
 ---
 layout: mypost
-title: DASCTF 2024暑期挑战赛DosSnake-WP
+title: DASCTF 2024 暑期挑战赛DosSnake-WP
 categories:
   - ReverseEngineering
   - WriteUp
