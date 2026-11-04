@@ -3,3 +3,5 @@
 /dist.tar.gz
 /.jekyll-cache
 /.bundle
+/.env.cos-upload
+/.venv-cos-upload

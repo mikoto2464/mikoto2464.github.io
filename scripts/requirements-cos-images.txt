@@ -1,0 +1,2 @@
+cos-python-sdk-v5==1.9.44
+Pillow==13.0.0
