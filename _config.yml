@@ -6,7 +6,7 @@ plugins:
 # SEO相关信息
 title: "mikoto2464's Blog"
 description: mikoto2464的个人博客
-keywords: mikoto2464,Blog,Java,Html,JavaScript,Python,Java,Linux
+keywords: mikoto2464,Blog,Java,Html,JavaScript,Python,Java,Linux,ReverseEngineering,ASM,C/CPP
 author: mikoto2464
 footerText: 'Copyright © 2025 mikoto2464'
 
@@ -20,7 +20,7 @@ exclude: ['CNAME', 'README.md', 'LICENSE', '_site', 'dist', 'Gemfile', 'Gemfile.
 
 # 域名配置
 # baseurl配置,如果网站部署在根目录下的其他目录中，请设置为 /目录名
-domainUrl: 'https://mikoto2464.github.io'
+domainUrl: 'https://0721.es'
 baseurl: ''
 
 # 吐个槽地址，会在chat页面中重定向到该地址
@@ -58,6 +58,6 @@ extCount: true
 
 # 友情链接
 links:
-  - title: Example
-    url: http://www.example.com/
+  - title: H1kari
+    url: http://h1kari.cn/
 
