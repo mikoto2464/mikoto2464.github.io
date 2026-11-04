@@ -15,33 +15,35 @@ _最新修改于  2026-11-05 01:29:31_
 base.exe: PE32 executable for MS Windows 4.00 (console), Intel i386, 3 sections
 ```
 
-显然此处`sub_401050`是关键的条件判断函数
-![](https://img.h1kari.cn/blog/images/542d275fa8442dae4b2a4a49d3d9c8ce8b1f15329abf7fb1a19e92c5a78125c0.png)
+观察main，显然可以看出关键的加密函数是`sub_401080`，且密文是位于0x40E0E4的字符串
+![](https://img.h1kari.cn/blog/images/41a4b163c03c6e8c10f51641ff2143eac869f26d6169c78370f38eef872e5c9f.webp)
 
-根据循环体可判断第一个循环是做异或，第二个则是逐字符比较
-![](https://img.h1kari.cn/blog/images/98841513f6fd3ed271fa370823e52b69c03e45d980275abfee2442d71e7a39a4.png)
+显然此处是base64加密
+![](https://img.h1kari.cn/blog/images/0260fb94bfe2d81355c8ae0dacd159fada1bdb9c500b215fca9cb2fb75a1d309.webp)
 
-其中`sub_401020`是利用循环获取字符长度
-![](https://img.h1kari.cn/blog/images/3e91a4f69debbdd1735b7dab63a4297b8f88ce9f0ada5b1a930f4195684c56d4.png)
+可是此处定位到的码表却是标准的码表，考虑到标准base64码表出现在此类题的概率较小，那么下一步查看此处的交叉引用
+![](https://img.h1kari.cn/blog/images/ac6e7ca77345643ecf884e9fbcec6c7787ba07059292642848f16aca0a89debb.webp)
+![](https://img.h1kari.cn/blog/images/8ec2688451032de15d1f166dd9c9d0c01e0f59955de1ae7f2cd0b286466dcbd3.webp)
 
-`sub_401000`则是获取初始的密钥
-![](https://img.h1kari.cn/blog/images/01dc9d9ea5d6dd1da7ea15097e9706c8f06a044685accf5027b13cf86c9dad2a.png)
+找到`sub_401000`，发现此处对base64码表进行动态修改
+![](https://img.h1kari.cn/blog/images/b572b768f2e4252ea1292d5c68fd2a8b15e276aabe6b11656c502b22f03520bd.webp)
 
-注意此处的ROL4是循环左移，且起初的`-2147024896`是__int32，在qalc下得补码，据此计算可得初始密钥为4
-![](https://img.h1kari.cn/blog/images/e81a2b2c6c77154ad8b21fb5e549e1780c67808403631e67fb5c78a4a4ba1a8b.png)
-
-接着阅读上述异或循环体可知，加密方式如下
+根据以上伪代码可以得到以下相应的计算码表的方法
 ```
-key = 4
-result = b""
-for i in reversed(range(len(data))):
-    d = data[i] ^ key
-    result += d
-    key = s
+data = [*'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/']
+for i in range(6,15):
+	x = data[10+i]
+	data[10+i] = data[i]
+	data[i] = x
 ```
 
-接着dump出`byte_403000`的密文，从`0x40300`到`0x403027`。
-![](https://img.h1kari.cn/blog/images/7e08dbf108e3426de5b3914a7119769874ac9bf94fd8be1bba632bf9a3a3af43.png)
+根据以上密文就有以下代码，但是显然此处得到的并不是准确的flag
+![](https://img.h1kari.cn/blog/images/3d8451cceeb3af3af1f2a83adfa01da054f6d6f0cf811a9f4bd92f7890d02043.webp)
 
-最终即可得到flag`flag{R_y0u_H0t_3n0ugH_t0_1gn1t3@flare-on.com}`
-![](https://img.h1kari.cn/blog/images/f86acfb84219c09571b69abac6933496fa8a180e8e6d9ef8acf0c4b907cf8cb4.png)
+观察发现，在return之前还调用了sub_401030函数，观察后可得知，此处是调换字母大小写
+![](https://img.h1kari.cn/blog/images/60d18bc1f78528232e68b0c98c9f95ef2fe81a4d56836b253e0fb68950900549.webp)
+
+![](https://img.h1kari.cn/blog/images/f58b0a6525cf86d0f56cc174e5455a28ca88c4a434543e286a2dc956a376a4b2.webp)
+
+那么也只需要调换密文的大小写，随后再做base64加密即可得到最终的flag`flag{bAse64_h2s_a_Surprise}`
+![](https://img.h1kari.cn/blog/images/55d94ed8bcb789f463e42caf6c7f694eaba86395f90e8130f1619c5bc94ebf63.webp)
