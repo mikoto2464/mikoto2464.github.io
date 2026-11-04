@@ -11,12 +11,14 @@
             "id": "a60fce49574eeefb",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "posts/2026/11/04/Pasted image 20261104212014.png"
+                "file": "_posts/2026-11-04-BUUCTF 特殊的BASE64.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "Pasted image 20261104212014"
+              "icon": "lucide-file",
+              "title": "2026-11-04-BUUCTF 特殊的BASE64"
             }
           }
         ]
@@ -186,20 +188,20 @@
       "bases:新建数据库": false
     }
   },
-  "active": "949b34bd770f7fb5",
+  "active": "a60fce49574eeefb",
   "lastOpenFiles": [
     "_posts/2026-11-04-DASCTF 2024 最后一战 tryre.md",
+    "_posts/2026-11-04-BUUCTF 特殊的BASE64.md",
+    "_posts/2026-11-04-DASCTF 2024 暑期挑战赛 DosSnake.md",
+    "posts/2026/11/04/Pasted image 20261104212014.png",
     "posts/2026/11/04/Pasted image 20261104212920.png",
     "posts/2026/11/04/Pasted image 20261104212540.png",
     "posts/2026/11/04/Pasted image 20261104212204.png",
     "posts/2026/11/04/Pasted image 20261104212105.png",
-    "posts/2026/11/04/Pasted image 20261104212014.png",
     "Pasted image 20261104212201.png",
     "Pasted image 20261104212915.png",
     "Pasted image 20261104212918.png",
     "Pasted image 20261104212919.png",
-    "_posts/2026-11-04-BUUCTF 特殊的BASE64.md",
-    "_posts/2026-11-04-DASCTF 2024 暑期挑战赛 DosSnake.md",
     "2026-11-04.md",
     "_posts/2026-11-04-BUUCTF 特殊的BASE64.md~",
     "posts/2026/11/04/12.png",
