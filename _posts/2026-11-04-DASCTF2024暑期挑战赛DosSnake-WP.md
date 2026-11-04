@@ -16,18 +16,16 @@ Game.exe: MS-DOS executable, MZ for MS-DOS
 ```
 
 IDA打开后shift+F12可以看到
-![[1.png]]
+![](1.png)
 
-查看此处的Hex View
-![[2.png]]
-
-猜测此处0x032A~0x0349是flag
+查看此处的Hex View 可以简单猜测此处0x032A~0x0349是flag
+![](2.png)
 
 查看上述0x0324"DASCTF"的IDA View，并定位到右侧的引用
-![[3.png]]
+![](3.png)
 
 查看引用处的汇编代码
-![[4.png]]
+![](4.png)
 
 根据下方的
 ```
@@ -40,7 +38,7 @@ inc    si                  ; 索引自增
 jmp    short loc_105FC     ; 继续读取字符并输出
 ```
 可知，此处逻辑是循环输出所有字符直到输出的字符为0
-![[5.png]]
+![](5.png)
 
 
 此处输出部分向上即可找到关键代码
@@ -62,7 +60,7 @@ lea    di, aDasctf     ; 设置di为0x324 此处是为了实现密钥DASCTF的�
 loc_105F6:
 loop   loc_105E4       ; cx==0时继续执行下方代码，否则回到loc_105E4
 ```
-![[6.png]]
+![](6.png)
 
 所以此处的核心加密实际上很简单
 ```
@@ -75,4 +73,4 @@ for i in range(len(flag)):
 
 又因为异或运算的可逆性 所以只需替换flag为密文即可解得flag
 `DASCTF{H0wfUnnytheDosSnakeis!!!}`
-![[7.png]]
+![](7.png)
