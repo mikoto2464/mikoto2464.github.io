@@ -4,7 +4,7 @@ title: GXYCTF 2019 luck_guy
 categories:
   - ReverseEngineering
   - WriteUp
-  - XOR
+  - C/CPP
 extMath: false
 ---
 _最新修改于  2026-11-05 15:08:09_
