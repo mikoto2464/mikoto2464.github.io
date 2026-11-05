@@ -12,7 +12,7 @@ _最新修改于  2026-11-05 15:38:07_
 
 查看文件类型
 ```
-> file
+> file challenge1.exe
 challenge1.exe: PE32 executable for MS Windows 5.01 (console), Intel i386, 6 sections
 ```
 
