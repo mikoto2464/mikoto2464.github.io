@@ -1,0 +1,28 @@
+---
+layout: mypost
+title: ZJNISC 2026 初赛 EasyAOSP
+categories:
+  - ReverseEngineering
+  - WriteUp
+  - Android
+extMath: false
+---
+_最新修改于  2026-11-07 20:28:35_
+
+定位到关键加解密部分，注意到所有的明文字面量被疑似base64的加密处理了
+![](https://img.h1kari.cn/blog/images/79ac0d826da6acbfe4a0e2f0b20824bcb1da643f150efc80baf0d098ccc54924.webp)
+
+查看StringFog.decrypt和IMPL.decrypt可以发现，StringFog加密是先做了一次base64再做xor
+![](https://img.h1kari.cn/blog/images/23ec731009999259b76e771ec028c77c2f762b3fa2489062edf44167a6d254a3.webp)![](https://img.h1kari.cn/blog/images/31b97699699e8a6f4401583ee49ea928efdb8d4208edb5d99e8fd28d12eeb4ba.webp)
+
+观察if这行可以发现加密flag的部分是先做aes再做xor
+![](https://img.h1kari.cn/blog/images/6ac4ee8e53314c1b409bb36308097e6ff2b548274ebe3c7b3d84096cdedf1021.webp)
+
+接着在encrpyto处可以看到是AES/ECB/PKCS5Padding的标准AES加密。
+![](https://img.h1kari.cn/blog/images/119538e03d21225082cbe72c9e2cce8e8bea6f5abb18ec415ec44fb351cfca35.webp)
+
+通过上述的StringFog解密可以发现aeskey是`aessisissosohaha`
+![](https://img.h1kari.cn/blog/images/6a45e1edab260c7c897843f7295c44c3d6fc5a74def3117d7961cd2de9395d08.webp)
+
+据此即可得出flag是`DASCTF{android_is_so_easy_learn}`
+![](https://img.h1kari.cn/blog/images/016a9faa58a90ff90baeb18025c7f8bc871099e992100d6bb9ed19ac3425278a.webp)
