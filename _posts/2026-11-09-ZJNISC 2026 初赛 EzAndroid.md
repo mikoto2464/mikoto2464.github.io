@@ -13,16 +13,16 @@ extMath: false
 _最新修改于  2026-11-09 20:15:05_
 
 打开apk后可以发现此处用的是Androlua框架
-![](Pasted%20image%2020261107215717.png)
+![](https://img.h1kari.cn/blog/images/b31144b44c6db83aa6055bfd8f60a9ca142e5246c22ce82f73e876646458c760.webp)
 
 且在assets目录下发现了大量lua文件
-![](Pasted%20image%2020261108115039.png)
+![](https://img.h1kari.cn/blog/images/9cb75e41cd2ad8ec97116260d3c0d75fcdb732bf91224c3df5e375220a413ff5.webp)
 
 将main.lua给dump出来后，尝试用unluac解密可以发现出现错误
-![](Pasted%20image%2020261108185914.png)
+![](https://img.h1kari.cn/blog/images/c9c47e2b3ab3db65197cf9d1fc04f246b0ae83fd8a7ea2c2cad01c1c2ca03e15.webp)
 
 注意到文件开头是`1B 45 67 7A`
-![](Pasted%20image%2020261108185724.png)
+![](https://img.h1kari.cn/blog/images/de0aa1c1e3d9ed7d945227057d7119768711d5b0a57d6a003eeb02a8dabaf42c.webp)
 
 而正常lua文件编译后应该是`1B 4C 75 61`，将以上二者异或后则有异或密钥的前三位。而此密钥有明显的规律是0x09的倍数
 ```text
@@ -61,20 +61,20 @@ with zipfile.ZipFile('ezAndroid.apk', "r") as apk:
             f.write(decrypt_lua(apk.read(name)))
         print(f"[+] {name}")
 ```
-![](Pasted%20image%2020261108190810.png)
+![](https://img.h1kari.cn/blog/images/d20de84f0bc094247e3a38ffe6e49a163df660366ecb071dc3a3b7cf692941ea.webp)
 
 随后调用unluac完成反编译 以及我这里自制的一个lua可读性增强脚本 即可得到完整的lua代码
-![](Pasted%20image%2020261109142456.png)
-![](Pasted%20image%2020261109142556.png)
+![](https://img.h1kari.cn/blog/images/3f1d0822b7ca448a258ea0a7edfb4f6519c28d6df8baba66484404f2c8d161b5.webp)
+![](https://img.h1kari.cn/blog/images/16db7ce75c94ba2749fe889d4fe2ee8b97078ce1de6adb8c8fe59f8d532d5fdd.webp)
 
 结合root.lua和pz.lua可以看到主要逻辑如下
-![](Pasted%20image%2020261109143023.png)
+![](https://img.h1kari.cn/blog/images/c4ffa75a3bb8221707bc73de842452b39c3ee7a0e96f65b43d68167d3780848b.webp)
 
 随后在pz.lua中可以发现明显的TEA系列加密特征，Delta是2161537835，轮次是38，此处用到的key是L8_1，密文是oianxasdavsdvasd，特别注意到此处是先算total再算v0再算v1，这和标准的XTEA稍微有些不同，所以解密时也要注意先处理v1再处理v0再处理total，特别地在38轮后还做了一次异或，所以解密时要先做异或再做xtea
-![](Pasted%20image%2020261109201045.png)
+![](https://img.h1kari.cn/blog/images/6b030315212bb3bebefcbe9666c1e14fbd8c83e817bea2b6e27e054d56159213.webp)
 
 注意上图所有数字常量是已经计算过的，此处算式是由114514组成的表达式，算式生成可以用itorr的恶臭数字论证器生成（喜
-![](Pasted%20image%2020261109153742.png)
+![](https://img.h1kari.cn/blog/images/ac35705d4b14d7d6bd4771fe60ef30052ec26d9e389e41adcaadb30efeae26f5.webp)
 
 综合以上信息写出脚本，最终可得到flag是`7a5e-55e45-1671e-df3b7-cd7a1-6f1e-27fc`
 ### POC
