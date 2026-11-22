@@ -3,10 +3,6 @@ layout: mypost
 title: ACTF 2020 新生赛 usualCrypt
 categories:
   - 二进制逆向
-  - Writeup
-  - Base64
-  - C-CPP
-  - XOR
 extMath: false
 ---
 _最新修改于  2026-11-05 01:29:31_

@@ -3,9 +3,6 @@ layout: mypost
 title: DASCTF 2024 暑期挑战赛 DosSnake
 categories:
   - 二进制逆向
-  - Writeup
-  - ASM
-  - XOR
 extMath: false
 ---
 _最新修改于  2026-11-05 00:20:29_

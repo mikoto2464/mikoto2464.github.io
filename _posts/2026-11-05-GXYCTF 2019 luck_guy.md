@@ -3,8 +3,6 @@ layout: mypost
 title: GXYCTF 2019 luck_guy
 categories:
   - 二进制逆向
-  - Writeup
-  - C-CPP
 extMath: false
 ---
 _最新修改于  2026-11-05 15:08:09_
