@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2026-11-22-CISCN 2019 n_1.md",
+                "file": "_posts/2026-11-22-3DSCTF 2016 get_started.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-11-22-CISCN 2019 n_1"
+              "title": "2026-11-22-3DSCTF 2016 get_started"
             }
           }
         ]
@@ -190,23 +190,28 @@
   },
   "active": "ecf0c731f39b3550",
   "lastOpenFiles": [
+    "Pasted image 20261122210720.png",
+    "Pasted image 20261122210417.png",
+    "Pasted image 20261122210333.png",
+    "Pasted image 20261122210314.png",
     "_posts/2026-11-22-CSAW 2016 warmup.md",
+    "_posts/2026-11-22-CISCN 2019 n_1.md",
+    "_posts/2026-11-22-3DSCTF 2016 get_started.md",
+    "_posts/2026-11-05-GXYCTF 2019 luck_guy.md",
+    "_posts/2026-11-06-ACTF 2020 新生赛 SoulLike 暴力炸金法.md",
     "_posts/2026-11-06-CTF² 每日一练 FLUXVAULT：扁平化分派器测绘.md",
+    "_posts/2026-11-07-ZJNISC 2026 初赛 Shift.md",
     "_posts/2026-11-07-ZJNISC 2026 初赛 EzAOSP.md",
     "_posts/2026-11-09-ZJNISC 2026 初赛 EzAndroid.md",
-    "_posts/2026-11-22-CISCN 2019 n_1.md",
+    "_posts/2026-11-09-ZJNISC 2026 初赛 PyVM 暴力炸金法.md",
     "Pasted image 20261122175116.png",
     "Pasted image 20261122174931.png",
-    "_posts/2026-11-09-ZJNISC 2026 初赛 PyVM 暴力炸金法.md",
     "Pasted image 20261122170131.png",
     "_posts/2025-11-29-Protobuf逆向.md",
     "Pasted image 20261122142450.png",
     "Pasted image 20261122142359.png",
     "Pasted image 20261122142355.png",
     "Pasted image 20261122142332.png",
-    "_posts/2026-11-06-ACTF 2020 新生赛 SoulLike 暴力炸金法.md",
-    "_posts/2026-11-07-ZJNISC 2026 初赛 Shift.md",
-    "_posts/2026-11-05-GXYCTF 2019 luck_guy.md",
     "_posts/2026-11-05-FlareOn4 login.md",
     "_posts/2026-11-05-FlareOn4 IgniteMe.md",
     "_posts/2026-11-05-FlareOn3 Challenge1.md",
@@ -216,9 +221,6 @@
     "_posts/2026-11-04-DASCTF 2024 最后一战 tryre.md",
     "_posts/2026-11-04-DASCTF 2024 暑期挑战赛 DosSnake.md",
     "_posts/2026-11-04-BUUCTF 特殊的BASE64.md",
-    "Pasted image 20261105153506.png",
-    "Pasted image 20261109213124.png",
-    "Pasted image 20261109213121.png",
     "file:/home/mikoto/Projects/playground/ezAndroid_WP.md",
     "file:/home/mikoto/Projects/playground/rev2/disassembled_lua/README.readable-lua.md",
     "file:/home/mikoto/Projects/pharmalens-server/tests/fixtures/faceplusplus/README.md",
@@ -230,7 +232,6 @@
     "scripts/upload_cos_images.py",
     "scripts/test_upload_cos_images.py",
     "scripts/requirements-cos-images.txt",
-    "scripts/README-cos-images.md",
     "scripts",
     "posts/2026/11/05",
     "_config.yml~",
