@@ -2,9 +2,10 @@
 layout: mypost
 title: CTF² 每日一练 FLUXVAULT：扁平化分派器测绘
 categories:
-  - ReverseEngineering
+  - Rev
   - WriteUp
   - Javascript
+  - VM
 extMath: false
 ---
 _最新修改于  2026-11-06 20:24:08_

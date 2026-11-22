@@ -2,7 +2,7 @@
 layout: mypost
 title: DASCTF 2024 暑期挑战赛 DosSnake
 categories:
-  - ReverseEngineering
+  - Rev
   - WriteUp
   - ASM
   - XOR

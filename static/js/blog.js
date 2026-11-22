@@ -242,12 +242,8 @@ blog.initClickEffect = function (textArr) {
 }
 
 // 新建DIV包裹TABLE
-blog.addLoadEvent(function () {
-  // 文章页生效
-  if (document.getElementsByClassName('page-post').length == 0) {
-    return
-  }
-  var tables = document.getElementsByTagName('table')
+;(function () {
+  var tables = document.querySelectorAll('.page-post .post table')
   for (var i = 0; i < tables.length; i++) {
     var table = tables[i]
     var elem = document.createElement('div')
@@ -255,7 +251,7 @@ blog.addLoadEvent(function () {
     table.parentNode.insertBefore(elem, table)
     elem.appendChild(table)
   }
-})
+})()
 
 // 回到顶部
 blog.addLoadEvent(function () {

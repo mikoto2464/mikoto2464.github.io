@@ -2,7 +2,7 @@
 layout: mypost
 title: GXYCTF 2019 luck_guy
 categories:
-  - ReverseEngineering
+  - Rev
   - WriteUp
   - C/CPP
 extMath: false

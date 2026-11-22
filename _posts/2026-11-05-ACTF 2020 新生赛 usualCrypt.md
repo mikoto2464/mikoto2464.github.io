@@ -2,7 +2,7 @@
 layout: mypost
 title: ACTF 2020 新生赛 usualCrypt
 categories:
-  - ReverseEngineering
+  - Rev
   - WriteUp
   - XOR
   - C/CPP

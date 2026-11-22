@@ -31,49 +31,6 @@ html.dark .list-post li .categories a {
 html.dark .hover-underline:after {
   background-color: #c9d1d9;
 }
-html.dark .page-post .title {
-  color: #ffffff;
-}
-html.dark .page-post img {
-  box-shadow: none;
-}
-html.dark .page-post code {
-  background-color: rgba(240, 246, 252, 0.15);
-  color: #c9d1d9;
-}
-html.dark .page-post a {
-  color: #58a6ff;
-  border-bottom: 1px solid #58a6ff;
-}
-html.dark .page-post strong {
-  color: #ffffff;
-}
-html.dark .page-post b {
-  color: #ffffff;
-}
-html.dark .page-post blockquote {
-  border-left: 3px solid #3b434b;
-  background-color: rgba(59, 67, 75, 0.15);
-  color: #8b949e;
-}
-html.dark .page-post .table-container {
-  border: 1px solid #3b434b;
-}
-html.dark .page-post table {
-  border: 1px solid #3b434b;
-}
-html.dark .page-post tr {
-  border-bottom: 1px solid #3b434b;
-}
-html.dark .page-post hr {
-  background-color: #30363d;
-}
-html.dark .page-post table tr:nth-child(even) {
-  background-color: #161b22;
-}
-html.dark .page-post iframe {
-  opacity: 0.8;
-}
 html.dark .page-search #search-input {
   color: #f0f6fc;
   border: 1px solid #21262d;

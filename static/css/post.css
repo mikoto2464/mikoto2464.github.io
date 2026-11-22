@@ -1,164 +1,277 @@
 .page-post {
-  font-size: 14px;
-  line-height: 2;
-  word-break: break-all;
-}
-.page-post .title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #666666;
-}
-.page-post .subtitle {
-  font-size: 12px;
-  color: #999999;
-}
-.page-post .post > * {
-  margin: 18px 0;
-}
-.page-post .post > iframe {
-  margin: 0;
-  width: 100%;
-}
-.page-post .post h1,
-.page-post .post h2 {
-  font-weight: normal;
-  font-size: 17px;
-  position: relative;
-  cursor: pointer;
-}
-.page-post .post h1::before,
-.page-post .post h2::before {
-  content: '#';
-  top: 0;
-  font-weight: bold;
-  padding-right: 6px;
-}
-.page-post h3,
-.page-post h4,
-.page-post h5,
-.page-post h6 {
-  font-size: 15px;
-  font-weight: bold;
-}
-.page-post blockquote {
-  border-left: 3px solid #333333;
-  background-color: #f7f7f7;
-  padding: 9px 9px 9px 15px;
+  --post-heading: #17212b;
+  --post-muted: #5a6472;
+  --post-link: #0759a8;
+  --post-border: #d8dee6;
+  --post-surface: #f6f8fa;
+  --post-inline-code: #eef2f6;
+  --post-monospace: 'Cascadia Code', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  padding-block-end: 2rem;
+  font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
 }
 
-.page-post a {
-  color: #000000;
-  margin: 0 2px;
-  border-bottom: 1px solid #000000;
+html.dark .page-post {
+  --post-heading: #f0f6fc;
+  --post-muted: #a0aab5;
+  --post-link: #79b8ff;
+  --post-border: #30363d;
+  --post-surface: #161b22;
+  --post-inline-code: #222a35;
 }
-.page-post strong,
-.page-post b {
-  color: #000000;
+
+.page-post .post-header {
+  margin-block-end: 1.75rem;
+  padding-block-end: 1.25rem;
+  border-block-end: 1px solid var(--post-border);
 }
-.page-post .post ul {
-  margin-left: 16px;
+
+.page-post .title {
+  color: var(--post-heading);
+  font-size: clamp(1.75rem, 1.4rem + 1.6vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: balance;
 }
-.page-post .post ol {
-  margin-left: 23px;
-}
-.page-post ul > li {
-  list-style: disc;
-}
-.page-post ol > li {
-  list-style: decimal;
-}
-.page-post li > *{
-  margin: 6px 0;
-}
-.page-post img {
-  display: block;
-  max-width: 100%;
-  margin: 0 auto;
-  height: auto;
-  box-shadow: 0 0 5px #e0e0e0;
-}
-.page-post img[alt='line'] {
-  display: inline-block;
-  vertical-align: middle;
-  background-color: transparent;
-  box-shadow: none;
-  margin: 0 4px;
-  line-height: 1;
-}
-.page-post pre {
-  font-size: 0;
-  padding: 10px;
-  overflow: auto;
-  border-radius: 2px;
-  max-height: 610px;
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
-  tab-size: 4;
+
+.page-post .subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem 1rem;
+  margin-block-start: 0.75rem;
+  color: var(--post-muted);
+  font-size: 0.8125rem;
   line-height: 1.6;
 }
-.page-post code {
-  font-size: 13px;
-  background-color: #eeeeee;
-  word-break: break-all;
-  padding: 3px 5px;
-  margin: 0 4px;
-  border-radius: 5px;
-  color: #4d4d4c;
+
+.page-post .post > * {
+  margin-block: 0 1.25rem;
 }
-.page-post pre code {
-  font-size: 13px;
-  background-color: transparent !important;
-  word-break: keep-all;
-  padding: 0;
+
+.page-post .post :is(h1, h2, h3, h4, h5, h6) {
+  margin-block: 1.75rem 0.65rem;
+  color: var(--post-heading);
+  font-weight: 650;
+  line-height: 1.4;
+  scroll-margin-block-start: 1rem;
+}
+
+.page-post .post :is(h1, h2) {
+  margin-block-start: 2.5rem;
+  cursor: pointer;
+}
+
+.page-post .post :is(h1, h2)::before {
+  content: '#';
+  content: '#' / '';
+  margin-inline-end: 0.4em;
+  color: var(--post-link);
+  font-family: var(--post-monospace);
+  font-size: 0.85em;
+}
+
+.page-post .post h1 {
+  font-size: 1.625rem;
+}
+
+.page-post .post h2 {
+  font-size: 1.375rem;
+}
+
+.page-post .post h3 {
+  font-size: 1.1875rem;
+}
+
+.page-post .post :is(h4, h5, h6) {
+  font-size: 1em;
+}
+
+.page-post .post h6 {
+  color: var(--post-muted);
+}
+
+.page-post .post > :first-child {
+  margin-block-start: 0;
+}
+
+.page-post .post > :last-child {
+  margin-block-end: 0;
+}
+
+.page-post .post a {
+  color: var(--post-link);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.page-post .post :is(strong, b) {
+  color: var(--post-heading);
+}
+
+.page-post .post blockquote {
+  padding: 0.75em 1em;
+  border-inline-start: 3px solid var(--post-border);
+  background-color: var(--post-surface);
+  color: var(--post-muted);
+}
+
+.page-post .post :is(blockquote, li) > * + * {
+  margin-block-start: 0.5em;
+}
+
+.page-post .post :is(ul, ol) {
+  padding-inline-start: 1.5em;
+}
+
+.page-post .post ul {
+  list-style: disc;
+}
+
+.page-post .post ul ul {
+  list-style: circle;
+}
+
+.page-post .post ol {
+  list-style: decimal;
+}
+
+.page-post .post li + li {
+  margin-block-start: 0.25em;
+}
+
+.page-post .post img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.75rem auto;
+  border-radius: 0.375rem;
+  box-shadow: 0 0 0 1px var(--post-border);
+  cursor: zoom-in;
+}
+
+.page-post .post img[alt='line'] {
+  display: inline-block;
+  margin: 0 0.25em;
+  border-radius: 0;
+  box-shadow: none;
+  vertical-align: middle;
+}
+
+.page-post .post iframe {
+  width: 100%;
+  max-width: 100%;
+}
+
+html.dark .page-post .post iframe {
+  opacity: 0.8;
+}
+
+.page-post .post :is(pre, code) {
+  font-family: var(--post-monospace);
+}
+
+.page-post .post :not(pre) > code {
+  padding: 0.12em 0.3em;
+  border-radius: 0.25rem;
+  background-color: var(--post-inline-code);
+  font-size: 0.88em;
+}
+
+.page-post .post pre {
+  max-height: 38rem;
   margin: 0;
-  border-radius: unset;
-  color: inherit;
+  padding: 0.85rem 1rem;
+  overflow: auto;
+  border: 1px solid var(--post-border);
+  border-radius: 0.5rem;
+  background-color: var(--post-surface);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  tab-size: 4;
+  white-space: pre;
+  overflow-wrap: normal;
 }
-.page-post hr {
-  border: none;
-  height: 3px;
-  background-color: #eeeeee;
+
+.page-post .post > pre {
+  margin-block-end: 1.25rem;
 }
-.page-post table {
-  min-width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
-  border: 1px solid #dddddd;
+
+.page-post .post pre code {
+  font: inherit;
 }
-.page-post tr {
-  border-bottom: 1px solid #dddddd;
+
+.page-post .highlighter-rouge > .highlight {
+  border-radius: 0.5rem;
 }
-.page-post th {
-  font-weight: bold;
+
+.page-post .post hr {
+  margin-block: 2rem;
+  border: 0;
+  border-block-start: 1px solid var(--post-border);
 }
-.page-post th,
-.page-post td {
-  padding: 5px 10px;
-  text-align: left;
-}
-.page-post table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
+
 .page-post .table-container {
   overflow: auto;
-  margin: 14px 0;
-  border: 1px solid #dddddd;
+  border: 1px solid var(--post-border);
+  border-radius: 0.5rem;
 }
+
+.page-post .post table {
+  width: 100%;
+  border: 1px solid var(--post-border);
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  overflow-wrap: normal;
+}
+
 .page-post .table-container table {
-  margin: 0;
   border: 0;
 }
-.page-post .table-container table tbody tr:last-child {
-  border-bottom: 0;
+
+.page-post .post th,
+.page-post .post td {
+  padding: 0.55rem 0.85rem;
+  text-align: start;
+  vertical-align: top;
 }
+
+.page-post .post :is(thead, tbody tr:nth-child(even)) {
+  background-color: var(--post-surface);
+}
+
+.page-post .post tbody tr + tr {
+  border-block-start: 1px solid var(--post-border);
+}
+
+.page-post .post thead tr {
+  color: var(--post-heading);
+  border-block-end: 1px solid var(--post-border);
+}
+
+.page-post .post th {
+  font-weight: 650;
+}
+
 @media screen and (max-width: 560px) {
   .page-post {
-    font-size: 13px;
+    font-size: 1rem;
+    line-height: 1.8;
   }
-  .page-post pre code {
-    font-size: 12px;
+
+  .page-post .post-header {
+    margin-block-end: 1.5rem;
+    padding-block-end: 1rem;
   }
-  .page-post .post > * {
-    margin: 15px 0;
+
+  .page-post .post :is(h1, h2) {
+    margin-block-start: 2rem;
+  }
+
+  .page-post .post pre {
+    padding: 0.75rem;
   }
 }

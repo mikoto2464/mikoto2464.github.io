@@ -2,7 +2,7 @@
 layout: mypost
 title: ZJNISC 2026 初赛 EzAndroid
 categories:
-  - ReverseEngineering
+  - Rev
   - WriteUp
   - Android
   - Lua
