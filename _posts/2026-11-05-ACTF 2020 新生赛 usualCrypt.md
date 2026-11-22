@@ -3,7 +3,6 @@ layout: mypost
 title: ACTF 2020 新生赛 usualCrypt
 categories:
   - 二进制逆向
-tags:
   - Writeup
   - Base64
   - C-CPP

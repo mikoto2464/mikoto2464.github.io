@@ -3,7 +3,6 @@ layout: mypost
 title: GXYCTF 2019 luck_guy
 categories:
   - 二进制逆向
-tags:
   - Writeup
   - C-CPP
 extMath: false
