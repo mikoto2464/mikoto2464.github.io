@@ -2,8 +2,9 @@
 layout: mypost
 title: DASCTF 2024 暑期挑战赛 DosSnake
 categories:
-  - Rev
-  - WriteUp
+  - 二进制逆向
+tags:
+  - Writeup
   - ASM
   - XOR
 extMath: false

@@ -2,9 +2,10 @@
 layout: mypost
 title: CTF² 每日一练 FLUXVAULT：扁平化分派器测绘
 categories:
-  - Rev
-  - WriteUp
-  - Javascript
+  - 脚本逆向
+tags:
+  - Writeup
+  - JavaScript
   - VM
 extMath: false
 ---

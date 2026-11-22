@@ -2,12 +2,12 @@
 layout: mypost
 title: ZJNISC 2026 初赛 EzAndroid
 categories:
-  - Rev
-  - WriteUp
-  - Android
+  - Android逆向
+tags:
+  - Writeup
   - Lua
-  - XTEA
   - XOR
+  - XTEA
 extMath: false
 ---
 _最新修改于  2026-11-09 20:15:05_

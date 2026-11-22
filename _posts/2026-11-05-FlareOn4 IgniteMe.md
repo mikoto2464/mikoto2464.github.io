@@ -2,10 +2,11 @@
 layout: mypost
 title: FlareOn4 IgniteMe
 categories:
-  - Rev
-  - WriteUp
+  - 二进制逆向
+tags:
+  - Writeup
+  - C-CPP
   - XOR
-  - C/CPP
 extMath: false
 ---
 _最新修改于  2026-11-05 01:29:31_
