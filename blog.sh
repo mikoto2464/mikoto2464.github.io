@@ -20,5 +20,6 @@ elif test "$1" = "images"; then
     python3 scripts/upload_cos_images.py "$@"
   fi
 else
-  echo "usage: $0 {run [port]|build|deploy|images [--apply] [markdown ...]}"
+  echo "usage: $0 {run [port]|build|deploy|images [options] [markdown ...]}"
+  echo "Run '$0 images --help' for upload, restore, and cleanup options."
 fi

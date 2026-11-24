@@ -5,7 +5,11 @@ categories:
   - Pwn
 extMath: false
 ---
-_最新修改于  2026-11-22 22:03:23_
+_最新修改于  2026-11-24 16:34:40_
+
+本题考点：
+ - 栈溢出调用函数
+ - 额外调用输出使得flag外显
 
 在main中可以看到此处是通过gets(v4)注入栈内存
 ![](https://img.h1kari.cn/blog/images/af4471aea061e425661f7193f012570e079762ebce3aeb71df6e6d917f107ce7.webp)

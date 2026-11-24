@@ -51,21 +51,28 @@ Use a different lossless compression effort:
 
 ## Clean unused remote images
 
-The cleanup only considers content-hashed image objects created by this script under `COS_OBJECT_PREFIX`. Other bucket files and non-hash object names are ignored. References are collected from every Markdown file in the repository.
+Cleanup considers image objects named by their SHA-256 hash directly under `COS_OBJECT_PREFIX`. It looks for their keys across the site's Markdown, HTML, Liquid, CSS, JavaScript, and data files, including files outside `_posts`. Build output and caches are excluded. Cleanup uses the current working tree, so deploy any page changes that remove image references before applying deletion to images from the published site.
 
-Preview unused COS images without deleting anything:
+Preview unused COS images:
+
+```bash
+./blog.sh images --prune-only
+```
+
+Delete the unused COS images:
+
+```bash
+./blog.sh images --prune-only --apply
+```
+
+Use `--prune-remote` to include cleanup in the upload workflow:
 
 ```bash
 ./blog.sh images --prune-remote
+./blog.sh images --prune-remote --apply
 ```
 
-Upload images and then delete remote objects that are no longer referenced:
-
-```bash
-./blog.sh images --apply --prune-remote
-```
-
-Cleanup runs only after uploads and article rewrites succeed. The ordinary upload flow already deletes local source images once they are no longer referenced.
+The combined run deletes remote images after uploads and article rewrites succeed.
 
 ## Restore from the public image domain
 

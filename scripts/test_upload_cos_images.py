@@ -1,7 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, call, patch
 
 from PIL import Image
 
@@ -158,48 +158,115 @@ class UploadCosImagesTests(unittest.TestCase):
             root = Path(directory)
             posts = root / "_posts"
             posts.mkdir()
-            used_digest = "a" * 64
-            unused_digest = "b" * 64
+            used, unused, css, config, planned = (
+                f"blog/images/{character * 64}.webp" for character in "abcde"
+            )
             posts.joinpath("2026-11-05-example.md").write_text(
-                f"![](https://img.example.com/blog/images/{used_digest}.webp)",
+                f"![alt][image]\n\n[image]: https://img.example.com/{used}?size=1",
                 encoding="utf-8",
             )
-            settings = uploader.CosSettings(
-                secret_id="test",
-                secret_key="test",
-                token=None,
-                bucket="test",
-                region="test",
-                public_base_url="https://img.example.com",
-                public_referer="https://example.com/",
-                object_prefix="blog/images",
-                image_quality=82,
+            root.joinpath("style.css").write_text(
+                f".page {{ background: url(//old-cdn.example.com/{css}); }}",
+                encoding="utf-8",
             )
-
-            class FakeClient:
-                def __init__(self):
-                    self.deleted = []
-
-                def list_objects(self, **kwargs):
-                    return {
-                        "IsTruncated": "false",
-                        "Contents": [
-                            {"Key": f"blog/images/{used_digest}.webp"},
-                            {"Key": f"blog/images/{unused_digest}.png"},
-                            {"Key": "blog/images/readme.txt"},
-                            {"Key": f"other/{unused_digest}.png"},
-                        ],
-                    }
-
-                def delete_object(self, **kwargs):
-                    self.deleted.append(kwargs["Key"])
-
-            client = FakeClient()
+            root.joinpath("_config.yml").write_text(
+                f"image: https://img.example.com/{config.replace('/', '%2F')}",
+                encoding="utf-8",
+            )
+            root.joinpath("dist").mkdir()
+            root.joinpath("dist", "old.html").write_text(
+                f'<img src="https://img.example.com/{unused}">', encoding="utf-8"
+            )
+            settings = self.remote_cleanup_settings()
+            listing = [
+                {
+                    "IsTruncated": "true",
+                    "Contents": [{"Key": used}, {"Key": unused}],
+                },
+                {
+                    "IsTruncated": "false",
+                    "Contents": [
+                        {"Key": css},
+                        {"Key": config},
+                        {"Key": planned},
+                        {"Key": "blog/images/readme.txt"},
+                        {"Key": f"blog/images/nested/{'f' * 64}.png"},
+                        {"Key": f"other/{'f' * 64}.png"},
+                    ],
+                },
+            ]
+            client = Mock()
+            client.list_objects.side_effect = listing * 2
+            client.delete_objects.return_value = {"Deleted": [{"Key": unused}]}
             with patch.object(uploader, "create_cos_client", return_value=client):
+                previewed = uploader.prune_remote_objects(
+                    root, settings, apply_changes=False, planned_keys=[planned]
+                )
+                client.delete_objects.assert_not_called()
+                # The combined apply run has already written the new image URL.
+                posts.joinpath("2026-11-05-new.md").write_text(
+                    f"![](https://img.example.com/{planned})", encoding="utf-8"
+                )
                 deleted = uploader.prune_remote_objects(root, settings, apply_changes=True)
 
+            self.assertEqual(1, previewed)
             self.assertEqual(1, deleted)
-            self.assertEqual([f"blog/images/{unused_digest}.png"], client.deleted)
+            self.assertEqual(
+                [
+                    call(Bucket="test", Prefix="blog/images/", Marker="", MaxKeys=1000),
+                    call(Bucket="test", Prefix="blog/images/", Marker=unused, MaxKeys=1000),
+                ] * 2,
+                client.list_objects.call_args_list,
+            )
+            client.delete_objects.assert_called_once_with(
+                Bucket="test", Delete={"Quiet": "false", "Object": [{"Key": unused}]}
+            )
+
+    def test_remote_cleanup_reports_partial_batch_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            client = Mock()
+            first, second, third = (
+                f"blog/images/{character * 64}.png" for character in "abc"
+            )
+            client.list_objects.side_effect = [
+                {"IsTruncated": "true", "Contents": [{"Key": first}, {"Key": second}]},
+                {"IsTruncated": "false", "Contents": [{"Key": third}]},
+            ]
+            client.delete_objects.side_effect = [
+                {
+                    "Deleted": [{"Key": first}],
+                    "Error": [{"Key": second, "Code": "AccessDenied"}],
+                },
+                {"Deleted": [{"Key": third}]},
+            ]
+            with (
+                patch.object(uploader, "create_cos_client", return_value=client),
+                patch.object(uploader, "COS_OBJECT_BATCH_SIZE", 2),
+                self.assertRaisesRegex(RuntimeError, "deletion of 2/3"),
+            ):
+                uploader.prune_remote_objects(
+                    Path(directory), self.remote_cleanup_settings(), apply_changes=True
+                )
+            self.assertEqual(
+                [[first, second], [third]],
+                [
+                    [item["Key"] for item in request.kwargs["Delete"]["Object"]]
+                    for request in client.delete_objects.call_args_list
+                ],
+            )
+
+    def remote_cleanup_settings(self):
+        return uploader.CosSettings(
+            secret_id="test",
+            secret_key="test",
+            token=None,
+            bucket="test",
+            region="test",
+            public_base_url="https://img.example.com",
+            public_referer="https://example.com/",
+            object_prefix="blog/images",
+            image_quality=82,
+        )
 
 
 if __name__ == "__main__":
